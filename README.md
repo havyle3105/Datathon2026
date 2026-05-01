@@ -124,8 +124,8 @@ Phân tích theo **4 cấp độ**:
 - Kênh tiếp cận chủ đạo: organic_search (29,9%), social_media (20,1%), paid_search (19,9%)
 
 ### Diagnostic — Why did it happen?
-- **Champions (12,8% khách, $551.787 chi tiêu TB)** — nhóm giá trị cao nhất, gấp 2,25 lần Loyal
-- **At Risk (12,0% khách, $168.383 chi tiêu TB)** — đang im lặng, nguy cơ rời bỏ cao
+- **Champions (12,8% khách, 551.787 VND chi tiêu TB)** — nhóm giá trị cao nhất, gấp 2,25 lần Loyal
+- **At Risk (12,0% khách, 168.383 VND chi tiêu TB)** — đang im lặng, nguy cơ rời bỏ cao
 - Tỷ lệ trả hàng do **wrong_size chiếm 35%** (13.967/39.939 bản ghi) — vấn đề hệ thống
 - Tỷ lệ huỷ đơn đồng đều **9,1–9,4%** trên mọi kênh và nhóm tuổi → mang tính hệ thống
 
@@ -142,52 +142,25 @@ Xem chi tiết trong báo cáo [`report_datathon2026.docx`](./report_datathon202
 | # | Vấn đề | Hành động | KPI mục tiêu |
 |---|---|---|---|
 | 1 | Wrong_size 35% tổng trả hàng | Bảng size chuẩn + gợi ý size cá nhân hoá | Giảm wrong_size từ 35% → <20% trong 6 tháng |
-| 2 | At Risk 10.611 khách ($168K TB) | Win-back campaign 30 ngày, phân tầng ưu đãi | Reactivation rate ≥ 20% |
+| 2 | At Risk 10.611 khách (168K VND TB) | Win-back campaign 30 ngày, phân tầng ưu đãi | Reactivation rate ≥ 20% |
 | 3 | Inter-order gap 144 ngày | Loyalty tier + nhắc nhở cá nhân hoá theo lịch | Tăng purchase frequency 15% |
 
 ---
 
 ## 🤖 Phần 3 — Mô hình Dự báo Doanh thu
 
-### Mô hình sử dụng
-- **XGBoost** và **LightGBM** (ensemble)
+### Hướng tiếp cận mô hình
+- Để mô hình hóa đồng thời trend + seasonality + tác động vận hành, nghiên cứu sử dụng Prophet do Meta Platforms phát triển.
 - Dự báo cột `Revenue` hàng ngày cho giai đoạn 01/2023–07/2024
-
-### Feature Engineering (toàn bộ từ dữ liệu cung cấp)
-
-| Nhóm đặc trưng | Chi tiết |
-|---|---|
-| Thời gian | day_of_week, month, quarter, is_weekend, is_month/quarter_start/end |
-| Lag features | Revenue lag 1, 7, 14, 28, 30, 60, 90 ngày |
-| Rolling stats | Rolling mean & std theo cửa sổ 7, 14, 30, 60, 90 ngày |
-| Web traffic | sessions, unique_visitors, page_views, bounce_rate |
-| Inventory | fill_rate, stockout_flag, overstock_flag (tổng hợp tháng) |
-| Promotion | Số lượng khuyến mãi đang chạy mỗi ngày |
-
-### Chống Data Leakage
-- Tất cả lag feature sử dụng thông tin **≥ 1 ngày trước** thời điểm dự báo
-- Cross-validation theo **thứ tự thời gian** (TimeSeriesSplit, 5 folds), không xáo trộn
 
 ### Kết quả
 
-| Mô hình | MAE | RMSE | R² |
+|  | Revenue (Vali) | Revenue (Test) |
 |---|---|---|---|
-| XGBoost | [TODO] | [TODO] | [TODO] |
-| LightGBM | [TODO] | [TODO] | [TODO] |
-| **Ensemble (best)** | **[TODO]** | **[TODO]** | **[TODO]** |
-| Baseline (mean) | [TODO] | [TODO] | 0.000 |
-
-> Điền kết quả từ Kaggle leaderboard vào bảng trên.
-
----
-
-## 📋 Thang điểm Cuộc thi
-
-| Phần | Nội dung | Điểm |
-|---|---|---|
-| Phần 1 | Câu hỏi Trắc nghiệm (10 câu × 2 điểm) | 20/100 |
-| Phần 2 | Trực quan hoá & Phân tích EDA | 60/100 |
-| Phần 3 | Mô hình Dự báo Doanh thu | 20/100 |
+| MAE | 274 | 1189830 |
+| RMSE | 397 | 1520244 |
+| MAPE | 10.24% | 49.98% |
+| R² | 0.944 |  |
 
 ---
 
@@ -208,7 +181,6 @@ lightgbm>=4.1
 
 ## ⚠️ Lưu ý
 
-- File `Data/` **không được commit** lên GitHub (thêm vào `.gitignore`)
 - Random seed = `42` đã được cố định trong toàn bộ code
 - `submission.csv` phải giữ **đúng thứ tự** như `sample_submission.csv`, không được sắp xếp lại
 
